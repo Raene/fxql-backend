@@ -24,7 +24,7 @@ Please note: All envs must be set if not the
 
 ## Description
 
-[FXQL-PARSER](https://github.com/nestjs/nest) this is a simple fxql parser implemented in Nestjs and Typescript for the [Miraapp](https://miraapp.notion.site/Backend-Developer-Technical-Assessment-a954df277ad34772a261ddfe2dd7210c) technical assessment. This project is a simple fxql parser that takes a string as input and returns a JSON object as output. The parser is implemented using the NestJS framework and TypeScript. The project includes a single endpoint that accepts a POST request with a JSON payload containing the fxql string. The endpoint returns a JSON object containing the parsed fxql string. The project also includes unit tests for the parser using Jest and Supertest. The project is structured as follows:
+[FXQL-PARSER](https://fxql-backend-m679.onrender.com/api) this is a simple fxql parser implemented in Nestjs and Typescript for the [Miraapp](https://miraapp.notion.site/Backend-Developer-Technical-Assessment-a954df277ad34772a261ddfe2dd7210c) technical assessment. This project is a simple fxql parser that takes a string as input and returns a JSON object as output. The parser is implemented using the NestJS framework and TypeScript. The project includes a single endpoint that accepts a POST request with a JSON payload containing the fxql string. The endpoint returns a JSON object containing the parsed fxql string. The project also includes unit tests for the parser using Jest and Supertest. The project is structured as follows:
 
 - `src/`: Contains the source code for the project.
   - `fxql/fxql.controller.ts`: Defines the endpoint for the parser.
