@@ -41,7 +41,8 @@ Please note: All envs must be set if not the
   "FXQL": "USD-GBP {\n BUY 100\n SELL 200\n CAP 93800\n}"
 }
 ```
-visit ```[baseurl]/api``` to see the swagger documentation if running locally, then baseurl is localhost:3000 if PORT is set, then 3000 should be replaced with the port number.
+
+visit [https://fxql-backend-m679.onrender.com/api]() to see the swagger documentation if running locally, then baseurl is localhost:3000 if PORT is set, then 3000 should be replaced with the port number.
 
 ## Constraints
 
@@ -90,4 +91,4 @@ $ npm run test:cov
 
 - Author - [Abdulrahman Salau](https://github.com/raene)
 - Email - [bob.salau@gmail.com](mailto:bob.salau@gmail.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
+- Website - [https://fxql-backend-m679.onrender.com/api]()
