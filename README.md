@@ -1,4 +1,5 @@
 ## Table of Contents
+
 - Local Development requirements
 - Environment variables needed
 - Description
@@ -8,13 +9,15 @@
 - Running the app
 
 ## Environment variables needed
+
 - MONGO_URI
 - MIN_VALUE //minimum value required for a currency pair sell or buy. this was said to be 0 in the Assessement question, since BUY or SELL can not be lesser than 0
 - MAX_FXQL //maximum limit for currency pairs  per request this was said to be 1000 in the Assessement but you can increase it buy setting the env
 
-Please note: All envs must be set if not the EnvValidator will throw an error on app startup
+Please note: All envs must be set if not the
 
 ## Local Development requirements
+
 - Node.js (v14 or later)
 - NPM (v6 or later)
 - Docker (optional, for running the database in a container)
@@ -38,6 +41,7 @@ Please note: All envs must be set if not the EnvValidator will throw an error on
   "FXQL": "USD-GBP {\n BUY 100\n SELL 200\n CAP 93800\n}"
 }
 ```
+visit ```[baseurl]/api``` to see the swagger documentation if running locally, then baseurl is localhost:3000 if PORT is set, then 3000 should be replaced with the port number.
 
 ## Constraints
 
@@ -81,6 +85,7 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+
 ## Stay in touch
 
 - Author - [Abdulrahman Salau](https://github.com/raene)
