@@ -7,15 +7,33 @@ import {
 } from '@nestjs/common';
 import { FxqlService } from './fxql.service';
 import { Throttle } from '@nestjs/throttler';
+import {
+  CreateFxqlDTO,
+  CreateFxqlResponse,
+  ErrorMessageResponse,
+} from 'src/interfaces/fxql.interface';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('fxql')
 @Controller('fxql')
 export class FxqlController {
   private readonly logger = new Logger(FxqlController.name);
   constructor(private readonly fxqlService: FxqlService) {}
 
   @Post()
+  @ApiOperation({ summary: 'Parse FXQL String' })
+  @ApiResponse({
+    status: 201,
+    description: 'Successfully parsed the FXQL string',
+    type: [CreateFxqlResponse],
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid FXQL format or validation error',
+    type: [ErrorMessageResponse],
+  })
   @Throttle({})
-  async create(@Body() body: { FXQL: string }) {
+  async create(@Body() body: CreateFxqlDTO) {
     try {
       const { FXQL } = body;
       if (!FXQL) {

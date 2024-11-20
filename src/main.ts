@@ -5,6 +5,7 @@ import { CheckRequiredEnvVariables } from './helpers/checkEnv';
 import { LoggerMiddleware } from './logger/logger.middleware';
 import helmet from 'helmet';
 import { SanitizeMiddleware } from './sanitizer/sanitizer.middleware';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -23,6 +24,18 @@ async function bootstrap() {
       },
     }),
   );
+
+  // Setup Swagger API documentation
+  const config = new DocumentBuilder()
+    .setTitle('FXQL Parser API')
+    .setDescription('API for parsing FXQL currency data')
+    .setVersion('1.0')
+    .addTag('fxql')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+
   const configService = app.get(ConfigService);
   CheckRequiredEnvVariables(configService, [
     'MAX_FXQL',

@@ -5,7 +5,7 @@ import { DbFactory } from 'src/database/db.factory';
 import { FxqlDb } from 'src/database/fxql-db.class';
 import { NumberConsts } from 'src/enums/constants.enum';
 import { Currency } from 'src/enums/currencies.enum';
-import { FxqlI } from 'src/interfaces/fxql.interface';
+import { FxqlDto } from 'src/interfaces/fxql.interface';
 
 @Injectable()
 export class FxqlService {
@@ -18,7 +18,7 @@ export class FxqlService {
     this.fxqlDBClass = this.dbFactory.fetchDbClass('fxql');
   }
 
-  async create(input: FxqlI[]) {
+  async create(input: FxqlDto[]) {
     //before inserting many, we check if a currency pair already exists, if it does, we archive it
     //we loop through the array of fxqli and check if the same currency pair appears 2 times in the input
     const currencyPairs: string[] = [];
@@ -57,7 +57,7 @@ export class FxqlService {
     input = input.replace(/\\n/g, '\n');
     const regex =
       /(\w{3})-(\w{3})\s*{\s*BUY\s+([a-zA-Z\d.-]+)\s+SELL\s+([a-zA-Z\d.-]+)\s+CAP\s+([a-zA-Z\d.-]+)\s*}/g;
-    const parsedData: FxqlI[] = [];
+    const parsedData: FxqlDto[] = [];
 
     const multipleNewlinesRegex = /\n{2,}/;
     if (multipleNewlinesRegex.test(input)) {
@@ -152,8 +152,8 @@ export class FxqlService {
         buyPrice: parsedBuy,
         sellPrice: parsedSell,
         capAmount: parsedCap,
-        entryId: new Types.ObjectId(),
         currencyPair,
+        entryId: new Types.ObjectId(),
       });
     }
 
