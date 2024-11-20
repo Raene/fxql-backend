@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Types } from 'mongoose';
 import { DbFactory } from 'src/database/db.factory';
 import { FxqlDb } from 'src/database/fxql-db.class';
+import { NumberConsts } from 'src/enums/constants.enum';
 import { Currency } from 'src/enums/currencies.enum';
 import { FxqlI } from 'src/interfaces/fxql.interface';
 
@@ -18,14 +19,37 @@ export class FxqlService {
   }
 
   async create(input: FxqlI[]) {
+    //before inserting many, we check if a currency pair already exists, if it does, we archive it
+    //we loop through the array of fxqli and check if the same currency pair appears 2 times in the input
+    const currencyPairs: string[] = [];
+    for (let index = 0; index < input.length; index++) {
+      const i = input[index];
+      currencyPairs.push(i.currencyPair);
+    }
+
+    //update all currency pairs in the input to archived
+    await this.fxqlDBClass.updateMany(
+      {
+        currencyPair: {
+          $in: currencyPairs,
+        },
+        archivedOn: {
+          $exists: false,
+        },
+      },
+      {
+        archivedOn: new Date(),
+      },
+    );
     return await this.fxqlDBClass.insertMany(input);
   }
 
-  async getAll() {
+  async getAll(query: any) {
     return await this.fxqlDBClass.findAll({
       archivedOn: {
         $exists: false,
       },
+      ...query,
     });
   }
 
@@ -43,8 +67,19 @@ export class FxqlService {
     }
 
     let match: RegExpExecArray;
-    const MAX_FXQL = Number(this.configService.get<string>('MAX_FXQL'));
-    const MIN_VALUE = Number(this.configService.get<string>('MIN_VALUE'));
+    const MAX_FXQL = Number(
+      this.configService.get<string>(NumberConsts.MAX_FXQL),
+    );
+    const MIN_VALUE = Number(
+      this.configService.get<string>(NumberConsts.MIN_VALUE),
+    );
+    const kVCurrencyPairs: Record<
+      string,
+      {
+        lineNumber: number;
+        charPosition: number;
+      }
+    > = {};
     while ((match = regex.exec(input)) !== null) {
       const [_, curr1, curr2, buy, sell, cap] = match;
       const matchIndex = match.index;
@@ -54,6 +89,17 @@ export class FxqlService {
         input,
         matchIndex,
       );
+
+      const currencyPair = `${curr1}-${curr2}`;
+      if (kVCurrencyPairs[currencyPair] !== undefined) {
+        throw new Error(
+          `Duplicate currency pair found in your input: ${currencyPair} at line ${lineNumber}. position ${charPosition}, previously found at line ${kVCurrencyPairs[currencyPair].lineNumber} and position ${kVCurrencyPairs[currencyPair].charPosition} `,
+        );
+      }
+      kVCurrencyPairs[currencyPair] = {
+        lineNumber,
+        charPosition,
+      };
 
       if (parsedData.length > MAX_FXQL) {
         throw new Error('Maximum limit of 1000 currency pairs exceeded');
@@ -86,9 +132,6 @@ export class FxqlService {
 
       //check if buy or sell are lesser than zero and
       if (parsedBuy <= MIN_VALUE || parsedSell <= MIN_VALUE) {
-        console.log(
-          `Invalid buy or sell value: ${buy}-${sell} at line ${lineNumber} position ${charPosition}`,
-        );
         throw new Error(
           `Invalid buy or sell value: ${buy}-${sell} at line ${lineNumber} position ${charPosition}`,
         );
@@ -108,6 +151,7 @@ export class FxqlService {
         sellPrice: parsedSell,
         capAmount: parsedCap,
         entryId: new Types.ObjectId(),
+        currencyPair,
       });
     }
 
