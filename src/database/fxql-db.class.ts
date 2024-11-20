@@ -29,4 +29,8 @@ export class FxqlDb {
       .findOneAndUpdate(query, updates, { new: true })
       .exec();
   }
+
+  async updateMany(query: unknown, update: Partial<FxqlI>) {
+    return this.fxqlModel.updateMany(query, update);
+  }
 }
