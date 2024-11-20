@@ -31,6 +31,6 @@ export class FxqlDb {
   }
 
   async updateMany(query: unknown, update: Partial<FxqlI>) {
-    return this.fxqlModel.updateMany(query, update);
+    return this.fxqlModel.updateMany(query, update).lean().exec();
   }
 }
