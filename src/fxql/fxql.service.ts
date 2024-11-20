@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Types } from 'mongoose';
 import { DbFactory } from 'src/database/db.factory';
@@ -92,7 +92,7 @@ export class FxqlService {
 
       const currencyPair = `${curr1}-${curr2}`;
       if (kVCurrencyPairs[currencyPair] !== undefined) {
-        throw new Error(
+        throw new BadRequestException(
           `Duplicate currency pair found in your input: ${currencyPair} at line ${lineNumber}. position ${charPosition}, previously found at line ${kVCurrencyPairs[currencyPair].lineNumber} and position ${kVCurrencyPairs[currencyPair].charPosition} `,
         );
       }
@@ -102,18 +102,20 @@ export class FxqlService {
       };
 
       if (parsedData.length > MAX_FXQL) {
-        throw new Error('Maximum limit of 1000 currency pairs exceeded');
+        throw new BadRequestException(
+          'Maximum limit of 1000 currency pairs exceeded',
+        );
       }
 
       if (!/\w{3}-\w{3}\s/.test(_)) {
-        throw new Error(
+        throw new BadRequestException(
           `Invalid format: Missing single space after currency pair at line ${lineNumber}. position ${charPosition}`,
         );
       }
 
       //validate currency pair
       if (!validateCurrency(curr1) || !validateCurrency(curr2)) {
-        throw new Error(
+        throw new BadRequestException(
           `Invalid currency pair: ${curr1}-${curr2} at line ${lineNumber}`,
         );
       }
@@ -125,14 +127,14 @@ export class FxqlService {
         console.log(
           `Invalid buy or sell value: ${buy}-${sell} at line ${lineNumber} position ${charPosition}`,
         );
-        throw new Error(
+        throw new BadRequestException(
           `Invalid buy or sell value: ${buy}-${sell} at line ${lineNumber} position ${charPosition}`,
         );
       }
 
       //check if buy or sell are lesser than zero and
       if (parsedBuy <= MIN_VALUE || parsedSell <= MIN_VALUE) {
-        throw new Error(
+        throw new BadRequestException(
           `Invalid buy or sell value: ${buy}-${sell} at line ${lineNumber} position ${charPosition}`,
         );
       }
@@ -140,7 +142,7 @@ export class FxqlService {
       //cap must be a whole number
 
       if (isNaN(parsedCap) || parsedCap < 0 || !Number.isInteger(parsedCap)) {
-        throw new Error(
+        throw new BadRequestException(
           `Invalid CAP value for ${curr1}-${curr2} at line ${lineNumber} position ${charPosition}`,
         );
       }
@@ -157,7 +159,7 @@ export class FxqlService {
 
     // If no matches, check for invalid FXQL blocks
     if (parsedData.length === 0) {
-      throw new Error('No valid FXQL statements found.');
+      throw new BadRequestException('No valid FXQL statements found.');
     }
     return parsedData;
   }
