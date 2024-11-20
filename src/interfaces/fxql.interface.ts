@@ -8,6 +8,7 @@ export interface FxqlI {
   buyPrice: number;
   capAmount: number;
   archivedOn?: Date;
+  currencyPair: string;
 }
 
 export interface FxqlDocument extends FxqlI {

@@ -32,6 +32,11 @@ export const FxqlSchema = new Schema(
     archivedOn: {
       type: Date,
     },
+    currencyPair: {
+      type: String,
+      required: true,
+      index: true,
+    },
   },
   {
     timestamps: true,
